@@ -1,0 +1,82 @@
+i = 0
+phi_1 = []
+while i < 80:
+    phi_1.append(i)
+    i = i + 1
+for a in phi_1:
+    if a%2!=0:
+        phi_1.remove(a)
+j = 1
+phi_2 = []
+while j <= 80:
+    phi_2.append(j)
+    j = j + 1
+for b in phi_2:
+    if b%2==0:
+        phi_2.remove(b)
+al_1 = float(input("alpha_1 = "))
+al_2 = float(input("alpha_2 = "))
+bet_1 = float(input("beta_1 = "))
+bet_2 = float(input("beta_2 = "))
+rho_1 = float(input("rho_1 = "))
+rho_2 = float(input("rho_2 = "))
+import numpy as np
+np_phi_1 = np.array(phi_1)
+np_phi_2 = np.array(phi_2)
+np_theta = (np_phi_1 + np_phi_2)/2
+k_1 = 0
+k_2 = 0
+k_3 = 0
+k_4 = 0
+k_5 = 0
+R_theta_1 = []
+R_theta_2 = []
+R_theta_3 = []
+R_theta_4 = []
+import math as m
+while k_1 < 40:
+    x = (al_2*rho_2*m.cos(phi_1[k_1])/al_1*rho_1*m.cos(phi_2[k_1]))/2
+    R_theta_1.append(x)
+    k_1 = k_1 + 1
+R_theta_1_1 = []
+for a in R_theta_1:
+    if a<0:
+        R_theta_1_1.append((-1)*a)
+        R_theta_1.remove(a)
+R_theta_1 = R_theta_1 + R_theta_1_1
+e_R_theta_1 = []
+while k_5 < 40:
+    s = m.log(R_theta_1[k_5])
+    e_R_theta_1.append(s)
+    k_5 = k_5 + 1
+while k_2 < 40:
+    y = (2 + (m.log(rho_2/rho_1))/(m.log(al_2/al_1) - m.log(al_2*bet_1/al_1*bet_2)))
+    R_theta_2.append(y)
+    k_2 = k_2 + 1
+while k_3 < 40:
+    z = ((bet_1*2 - bet_2*2)/al_1*2)
+    R_theta_3.append(z)
+    k_3 = k_3 + 1
+while k_4 < 40:
+    w = (m.sin(np_theta[k_4]))**2
+    R_theta_4.append(w)
+    k_4 = k_4 + 1
+np_R_theta_1 = np.array(e_R_theta_1)    
+np_R_theta_2 = np.array(R_theta_2)
+np_R_theta_3 = np.array(R_theta_3)
+np_R_theta_4 = np.array(R_theta_4)
+np_R_theta_5 = (np_R_theta_3)*(np_R_theta_4)
+np_R_theta = np_R_theta_1 + np_R_theta_2 + np_R_theta_5
+import matplotlib.pyplot as py
+from scipy.optimize import curve_fit as cf
+def best_fit(x, a, b, c):
+    return a*x + b*x**2 + c
+x, y = np_theta, np_R_theta
+params, _ = cf(best_fit, x, y)
+a, b, c = params
+py.scatter(np_theta, np_R_theta)
+py.plot(np_theta, best_fit(np_theta, params[0], params[1], params[2]), '--', color = 'red')
+py.xlabel("theta ------>")
+py.ylabel("R ( theta ) ------>")
+py.title("AVO Analysis using Bortfeld Approximation")
+py.show()
